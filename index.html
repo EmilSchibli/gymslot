@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GymSlot Prototyp</title>
+<meta name="description" content="Klickbarer Prototyp von GymSlot (Design Sprint, Beispieldaten)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef0f4; --card:#ffffff; --soft:#f5f6f8; --line:#dfe3ea;
+  --ink:#14171d; --mute:#5b6270; --blue:#1d4fb8; --blue-soft:#e8eefb;
+  --red:#d2453d; --red-soft:#fdeeed; --red-ink:#8f2a24;
+  --yel:#e0a419; --yel-soft:#fff5dc; --yel-ink:#6f4f00;
+  --grn:#2f9a5c; --grn-soft:#e8f5ed; --grn-ink:#1d6b3e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:48px;-webkit-font-smoothing:antialiased}
+.side{max-width:300px;font-size:14px;line-height:1.5;color:var(--mute)}
+.side h1{font-size:22px;color:var(--ink);margin:0 0 8px}
+.side ol{padding-left:18px;margin:8px 0 16px}
+.side button{font:inherit;font-weight:600;color:var(--blue);background:none;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;background:#fff}
+.phone{width:390px;height:844px;border-radius:52px;background:#111;padding:12px;box-shadow:0 30px 60px rgba(20,23,29,.18)}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--card)}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;border-radius:20px;background:#111;z-index:20}
+.view{position:absolute;inset:0;padding:58px 22px 28px;display:flex;flex-direction:column;gap:14px;background:var(--card);overflow-y:auto;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .32s}
+.view.hidden-right{transform:translateX(100%);pointer-events:none}
+.view.hidden-left{transform:translateX(-28%);opacity:0;pointer-events:none}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:32px}
+.back{display:flex;align-items:center;gap:4px;font:inherit;font-size:15px;font-weight:500;color:var(--blue);background:none;border:0;padding:6px 0;cursor:pointer}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--mute)}
+h2{margin:0;font-size:27px;font-weight:800;letter-spacing:-.01em}
+.sub{margin:2px 0 0;font-size:15px;color:var(--mute)}
+.brand{font-size:30px;font-weight:800;color:var(--blue);letter-spacing:-.02em;margin:0}
+.now{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px}
+.dot{width:24px;height:24px;border-radius:50%;flex-shrink:0}
+.dot.sm{width:10px;height:10px}
+.k{font-size:18px;font-weight:700;margin:0}
+.s{font-size:13px;color:var(--mute);margin:2px 0 0}
+.chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:end;height:170px;padding:0 2px}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.bar i{display:block;width:100%;border-radius:8px 8px 4px 4px;transform-origin:bottom;animation:grow .6s ease both}
+.bar span{font-size:12px;color:var(--mute)}
+.bar.nowbar span{color:var(--ink);font-weight:700}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mute)}
+.legend span{display:flex;align-items:center;gap:6px}
+.h3{margin:6px 0 0;font-size:16px;font-weight:700}
+.spacer{flex-grow:1}
+.cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border:0;border-radius:14px;background:var(--blue);color:#fff;font:inherit;font-size:17px;font-weight:600;cursor:pointer;transition:transform .1s,opacity .2s}
+.cta:active{transform:scale(.98)}
+.cta:disabled{opacity:.4;cursor:default}
+.ghost{background:var(--soft);color:var(--ink)}
+.opt{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:70px;padding:12px 18px;border-radius:14px;border:1px solid var(--line);background:var(--soft);font:inherit;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.opt b{display:block;font-size:17px;font-weight:600}
+.opt small{display:block;font-size:13px;color:var(--mute);margin-top:3px}
+.opt .radio{width:22px;height:22px;border-radius:50%;border:2px solid #b8bec9;flex-shrink:0}
+.opt.on{border:2px solid var(--blue);background:var(--blue-soft)}
+.opt.on .radio{border:7px solid var(--blue)}
+.opt:disabled{opacity:.5;cursor:default}
+.chips{display:flex;gap:8px}
+.chip{flex:1;min-height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.slot{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:84px;padding:12px 18px;border-radius:14px;border:2px solid;font:inherit;text-align:left;cursor:pointer;transition:transform .1s}
+.slot:active{transform:scale(.99)}
+.slot b{display:block;font-size:23px;font-weight:800}
+.slot small{display:block;font-size:14px;margin-top:2px;font-weight:500}
+.slot .meter{display:flex;gap:3px;margin-top:8px}
+.slot .meter i{width:22px;height:5px;border-radius:3px;background:rgba(0,0,0,.12)}
+.slot .best{font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--grn);color:#fff;margin-right:10px}
+.right{display:flex;align-items:center}
+.lv0{border-color:var(--grn);background:var(--grn-soft)} .lv0 small{color:var(--grn-ink)}
+.lv1{border-color:var(--yel);background:var(--yel-soft)} .lv1 small{color:var(--yel-ink)}
+.lv2{border-color:var(--red);background:var(--red-soft)} .lv2 small{color:var(--red-ink)}
+.box{padding:14px 18px;border-radius:14px}
+.box p{margin:0}
+.dev{display:flex;align-items:center;gap:14px;min-height:62px;padding:10px 18px;border-radius:14px;border:1px solid var(--line);background:var(--soft)}
+.dev b{display:block;font-size:16px;font-weight:600}
+.dev small{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.done{align-items:center;text-align:center}
+.check{width:96px;height:96px}
+.check circle{stroke-dasharray:280;stroke-dashoffset:280;animation:draw .6s ease forwards}
+.check path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .4s .45s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.sheet-bg{position:absolute;inset:0;background:rgba(20,23,29,.35);opacity:0;pointer-events:none;transition:opacity .25s;z-index:30}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:14px 22px 30px;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);z-index:31}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
+.sheet h3{margin:0 0 8px;font-size:19px}
+.sheet p{margin:0 0 10px;font-size:14px;line-height:1.5;color:var(--mute)}
+.open .sheet-bg{opacity:1;pointer-events:auto}
+.open .sheet{transform:none}
+.toast{position:absolute;left:22px;right:22px;bottom:96px;padding:12px 16px;border-radius:12px;background:var(--ink);color:#fff;font-size:14px;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;z-index:40}
+.toast.show{opacity:1;transform:none}
+.foot{font-size:12px;color:var(--mute);text-align:center;margin:0}
+@media (max-width:820px){.side{display:none}}
+@media (max-width:500px){
+  body{display:block;background:#fff}
+  .phone{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}
+  .screen{border-radius:0}
+  .notch{display:none}
+  .view{padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+}
+</style>
+</head>
+<body>
+
+<aside class="side">
+  <h1>GymSlot Prototyp</h1>
+  <p>Klickbarer Prototyp aus dem Design Sprint (Modul 245). Alle Daten sind Beispieldaten.</p>
+  <p><b>Testaufgabe:</b> Du willst heute Brust und Trizeps trainieren und hast ca. eine Stunde, 17:30 oder 19:00 geht beides. Plane dein Training mit GymSlot.</p>
+  <ol>
+    <li>Laut denken beim Klicken</li>
+    <li>Nicht erklären, nur zuschauen</li>
+    <li>Am Schluss: War die Prognose klar?</li>
+  </ol>
+  <button type="button" id="reset">Test neu starten</button>
+</aside>
+
+<div class="phone">
+<div class="screen" id="screen">
+  <div class="notch" aria-hidden="true"></div>
+
+  <!-- 1 Start -->
+  <section class="view" id="v-start" aria-label="Start">
+    <div class="top">
+      <div>
+        <p class="brand">GymSlot</p>
+        <p class="sub">FitZone Uster</p>
+      </div>
+      <button class="iconbtn" type="button" data-sheet aria-label="Was ist die Prognose?">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+      </button>
+    </div>
+    <div class="now" style="background:var(--yel-soft)">
+      <span class="dot" style="background:var(--yel)"></span>
+      <div><p class="k">Jetzt: mittel</p><p class="s">Stand 17:42, Prognose</p></div>
+    </div>
+    <p class="h3">Heute Abend</p>
+    <div class="chart" role="img" aria-label="Auslastung heute Abend: 16 Uhr leer, 17 Uhr mittel, 18 Uhr voll, 19 Uhr mittel, 20 Uhr leer, 21 Uhr leer">
+      <div class="bar"><i style="height:30%;background:var(--grn)"></i><span>16</span></div>
+      <div class="bar nowbar"><i style="height:62%;background:var(--yel)"></i><span>17</span></div>
+      <div class="bar"><i style="height:95%;background:var(--red)"></i><span>18</span></div>
+      <div class="bar"><i style="height:70%;background:var(--yel)"></i><span>19</span></div>
+      <div class="bar"><i style="height:40%;background:var(--grn)"></i><span>20</span></div>
+      <div class="bar"><i style="height:24%;background:var(--grn)"></i><span>21</span></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot sm" style="background:var(--red)"></i>voll</span>
+      <span><i class="dot sm" style="background:var(--yel)"></i>mittel</span>
+      <span><i class="dot sm" style="background:var(--grn)"></i>leer</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" type="button" data-go="training">Training planen</button>
+  </section>
+
+  <!-- 2 Training -->
+  <section class="view hidden-right" id="v-training" aria-label="Training wählen">
+    <div class="top"><button class="back" type="button" data-back>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button></div>
+    <div><h2>Dein Training</h2><p class="sub">Was machst du heute?</p></div>
+    <div id="opts" style="display:flex;flex-direction:column;gap:10px"></div>
+    <p class="h3">Wie lange?</p>
+    <div class="chips" id="chips"></div>
+    <div class="spacer"></div>
+    <button class="cta" type="button" id="toTimes" disabled>Zeiten vergleichen</button>
+  </section>
+
+  <!-- 3 Zeiten -->
+  <section class="view hidden-right" id="v-times" aria-label="Zeitvergleich">
+    <div class="top"><button class="back" type="button" data-back>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button>
+      <button class="iconbtn" type="button" data-sheet aria-label="Was ist die Prognose?">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+      </button></div>
+    <div><h2 id="tTitle">Push Day</h2><p class="sub" id="tSub">Wann ist es am ruhigsten?</p></div>
+    <div id="slots" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="box" id="reco" style="background:var(--grn-soft)"></div>
+    <div class="spacer"></div>
+    <p class="foot">Tippe auf eine Zeit für Details</p>
+  </section>
+
+  <!-- 4 Detail -->
+  <section class="view hidden-right" id="v-detail" aria-label="Detail">
+    <div class="top"><button class="back" type="button" data-back>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button></div>
+    <div><h2 id="dTitle">20:30 im Detail</h2><p class="sub" id="dSub">Nur dein Push Day</p></div>
+    <div id="devs" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="box" style="border:2px solid var(--yel);background:var(--yel-soft)">
+      <p style="font-size:15px;font-weight:700;color:var(--yel-ink)">Nur eine Prognose</p>
+      <p style="font-size:13px;color:#5c4a1c;margin-top:2px">Kein Garant fürs freie Gerät</p>
+    </div>
+    <p class="sub" id="alt" style="font-size:14px"></p>
+    <div class="spacer"></div>
+    <button class="cta" type="button" id="save">Zeit speichern</button>
+  </section>
+
+  <!-- 5 Gespeichert -->
+  <section class="view hidden-right done" id="v-done" aria-label="Gespeichert">
+    <div class="spacer"></div>
+    <svg class="check" viewBox="0 0 96 96" fill="none" aria-hidden="true"><circle cx="48" cy="48" r="44" stroke="#2f9a5c" stroke-width="5"/><path d="M30 49 L43 62 L67 36" stroke="#2f9a5c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2 style="margin-top:8px">Gespeichert</h2>
+    <p class="sub" id="doneTxt" style="font-size:16px"></p>
+    <div class="box" style="background:var(--soft);width:100%;text-align:left;margin-top:12px">
+      <p style="font-size:14px;font-weight:600" id="remTxt">Erinnerung um 19:45</p>
+      <p style="font-size:13px;color:var(--mute);margin-top:2px">Mit aktueller Prognose, falls es sich ändert</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" type="button" id="finish">Fertig</button>
+  </section>
+
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="sheet" role="dialog" aria-label="Was ist die Prognose?">
+    <div class="grab"></div>
+    <h3>Was ist die Prognose?</h3>
+    <p>GymSlot schätzt anhand von früheren Wochen, wie voll es zu einer Zeit ungefähr ist. Pro Bereich (z.B. Brust oder Beine) gibt es eine eigene Schätzung.</p>
+    <p>Es ist keine Live-Anzeige und keine Garantie, dass ein Gerät frei ist.</p>
+    <button class="cta ghost" type="button" id="sheetClose">Verstanden</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+</div>
+
+<script>
+(function(){
+  var LV = [
+    {txt:'eher leer', name:'leer', c:'var(--grn)'},
+    {txt:'mittel', name:'mittel', c:'var(--yel)'},
+    {txt:'eher voll', name:'voll', c:'var(--red)'}
+  ];
+  var DEV_TXT = ['frei','evtl. Wartezeit','oft besetzt'];
+  var TIMES = ['17:30','19:00','20:30'];
+  var TRAIN = {
+    push:{name:'Push', day:'Push Day', sub:'Brust, Trizeps', slots:[2,1,0],
+      devs:[['Brustpresse',[2,1,0]],['Schrägbank',[2,1,0]],['Kabelzug',[2,2,1]],['Dipstation',[1,0,0]]],
+      alt:'Falls der Kabelzug voll ist: Dips statt Trizepsdrücken'},
+    pull:{name:'Pull', day:'Pull Day', sub:'Rücken, Bizeps', slots:[1,2,0],
+      devs:[['Latzug',[1,2,0]],['Rudermaschine',[1,2,0]],['Kabelzug',[2,2,1]],['Klimmzugstange',[0,1,0]]],
+      alt:'Falls der Latzug voll ist: Klimmzüge mit Band'},
+    beine:{name:'Beine', day:'Leg Day', sub:'Squat, Beinpresse', slots:[2,2,1],
+      devs:[['Squat Rack',[2,2,1]],['Beinpresse',[2,1,1]],['Beinstrecker',[1,1,0]],['Beinbeuger',[1,1,0]]],
+      alt:'Falls das Squat Rack voll ist: Goblet Squats mit Kurzhantel'}
+  };
+  var state = {train:null, dur:60, slot:null};
+  var stack = ['start'];
+  var $ = function(id){return document.getElementById(id)};
+
+  function show(name){
+    var cur = stack[stack.length-1];
+    $('v-'+cur).className = $('v-'+cur).className.replace(/\bhidden-\w+/g,'') + ' hidden-left';
+    var v = $('v-'+name); v.classList.remove('hidden-right','hidden-left'); v.scrollTop = 0;
+    stack.push(name);
+  }
+  function back(){
+    if(stack.length<2) return;
+    var cur = stack.pop();
+    $('v-'+cur).classList.add('hidden-right');
+    $('v-'+stack[stack.length-1]).classList.remove('hidden-left');
+  }
+  function home(){
+    stack.forEach(function(n,i){ if(i>0) $('v-'+n).classList.add('hidden-right'); $('v-'+n).classList.remove('hidden-left'); });
+    stack = ['start'];
+  }
+  function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(function(){el.classList.remove('show')},2200); }
+
+  function renderOpts(){
+    var html='';
+    Object.keys(TRAIN).forEach(function(k){
+      var t=TRAIN[k], on=state.train===k;
+      html+='<button type="button" class="opt'+(on?' on':'')+'" data-train="'+k+'" aria-pressed="'+on+'"><span><b>'+t.name+'</b><small>'+t.sub+'</small></span><span class="radio"></span></button>';
+    });
+    html+='<button type="button" class="opt" data-soon><span><b>Eigene Geräte</b><small>selber wählen</small></span><span class="radio"></span></button>';
+    $('opts').innerHTML=html;
+    var ch='';[45,60,90].forEach(function(m){ch+='<button type="button" class="chip'+(state.dur===m?' on':'')+'" data-dur="'+m+'">'+m+' Min</button>'});
+    $('chips').innerHTML=ch;
+    $('toTimes').disabled=!state.train;
+  }
+  function meter(l){var h='';for(var i=0;i<3;i++)h+='<i style="'+(i<=l?'background:'+LV[l].c:'')+'"></i>';return h}
+  function renderTimes(){
+    var t=TRAIN[state.train]; var best=t.slots.indexOf(Math.min.apply(null,t.slots));
+    $('tTitle').textContent=t.day;
+    $('tSub').textContent='Wann ist es am ruhigsten? ('+state.dur+' Min)';
+    var h='';
+    t.slots.forEach(function(l,i){
+      h+='<button type="button" class="slot lv'+l+'" data-slot="'+i+'"><span><b>'+TIMES[i]+'</b><small>'+LV[l].txt+'</small><span class="meter">'+meter(l)+'</span></span><span class="right">'+(i===best?'<span class="best">Empfohlen</span>':'')+'<span class="dot" style="background:'+LV[l].c+'"></span></span></button>';
+    });
+    $('slots').innerHTML=h;
+    $('reco').innerHTML='<p style="font-size:16px;font-weight:700;color:var(--grn-ink)">Empfehlung: '+TIMES[best]+'</p><p style="font-size:13px;color:#2c4a37;margin-top:2px">Prognose, keine Garantie</p>';
+  }
+  function renderDetail(){
+    var t=TRAIN[state.train], i=state.slot;
+    $('dTitle').textContent=TIMES[i]+' im Detail';
+    $('dSub').textContent='Nur dein '+t.day;
+    var h='';
+    t.devs.forEach(function(d){var l=d[1][i];h+='<div class="dev"><span class="dot" style="width:22px;height:22px;background:'+LV[l].c+'"></span><span><b>'+d[0]+'</b><small>'+DEV_TXT[l]+'</small></span></div>'});
+    $('devs').innerHTML=h;
+    $('alt').textContent=t.alt;
+  }
+
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.go){ show(b.dataset.go); }
+    else if(b.hasAttribute('data-back')){ back(); }
+    else if(b.dataset.train){ state.train=b.dataset.train; renderOpts(); }
+    else if(b.hasAttribute('data-soon')){ toast('Eigene Geräte kommt in einer späteren Version'); }
+    else if(b.dataset.dur){ state.dur=+b.dataset.dur; renderOpts(); }
+    else if(b.id==='toTimes'){ renderTimes(); show('times'); }
+    else if(b.dataset.slot){ state.slot=+b.dataset.slot; renderDetail(); show('detail'); }
+    else if(b.id==='save'){
+      var t=TRAIN[state.train], tm=TIMES[state.slot];
+      var p=tm.split(':'), mins=(+p[0])*60+(+p[1])-45;
+      $('doneTxt').innerHTML='Heute '+tm+', '+t.day+' ('+state.dur+' Min)<br>FitZone Uster';
+      $('remTxt').textContent='Erinnerung um '+Math.floor(mins/60)+':'+('0'+mins%60).slice(-2);
+      var v=$('v-done'), c=v.querySelector('.check'); var n=c.cloneNode(true); c.parentNode.replaceChild(n,c);
+      show('done');
+    }
+    else if(b.id==='finish'||b.id==='reset'){ state={train:null,dur:60,slot:null}; renderOpts(); home(); }
+    else if(b.hasAttribute('data-sheet')){ $('screen').classList.add('open'); }
+    else if(b.id==='sheetClose'){ $('screen').classList.remove('open'); }
+  });
+  $('sheetBg').addEventListener('click',function(){ $('screen').classList.remove('open'); });
+  renderOpts();
+})();
+</script>
+</body>
+</html>
